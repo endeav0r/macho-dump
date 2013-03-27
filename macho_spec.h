@@ -339,17 +339,17 @@ struct segment_command { /* for 32-bit architectures */
 };
 
 struct segment_command_64 { /* for 64-bit architectures */
-    uint32_t    cmd;        /* LC_SEGMENT_64 */
-    uint32_t    cmdsize;    /* includes sizeof section_64 structs */
-    char        segname[16];    /* segment name */
-    uint64_t    vmaddr;     /* memory address of this segment */
-    uint64_t    vmsize;     /* memory size of this segment */
-    uint64_t    fileoff;    /* file offset of this segment */
-    uint64_t    filesize;   /* amount to map from the file */
+    uint32_t   cmd;        /* LC_SEGMENT_64 */
+    uint32_t   cmdsize;    /* includes sizeof section_64 structs */
+    char       segname[16];    /* segment name */
+    uint64_t   vmaddr;     /* memory address of this segment */
+    uint64_t   vmsize;     /* memory size of this segment */
+    uint64_t   fileoff;    /* file offset of this segment */
+    uint64_t   filesize;   /* amount to map from the file */
     uint32_t   maxprot;    /* maximum VM protection */
     uint32_t   initprot;   /* initial VM protection */
-    uint32_t    nsects;     /* number of sections in segment */
-    uint32_t    flags;      /* flags */
+    uint32_t   nsects;     /* number of sections in segment */
+    uint32_t   flags;      /* flags */
 };
 
 #define SG_HIGHVM   0x1 /* the file contents for this segment is for
@@ -791,5 +791,5 @@ struct fat_arch {
 #define VM_PROT_DEFAULT    (VM_PROT_READ|VM_PROT_WRITE)
 #define VM_PROT_ALL        (VM_PROT_READ | VM_PROT_WRITE | VM_PROT_EXECUTE)
 #define VM_PROT_NO_CHANGE  0x08
-#define VM_PROT_COPY       0x10)
-#define VM_PROT_WANTS_COPY 0x10)
+#define VM_PROT_COPY       0x10
+#define VM_PROT_WANTS_COPY 0x10

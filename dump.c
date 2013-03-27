@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "macho_spec.h"
 #include "macho_field_string.h"
@@ -125,6 +126,53 @@ MACH_LOAD_COMMAND_FIELD(cmdsize)
 * PARSERS
 */
 
+void mach_section (struct _buf * buf, struct section * section)
+{
+    struct mach_header * mh = mach_mach_header(buf);
+
+    char name[17];
+    strncpy(name, section->sectname, 17);
+    name[16] = '\0';
+    printf("      sectname %s\n", name);
+    strncpy(name, section->segname, 17);
+    name[16] = '\0';
+    printf("      segname  %s\n", name);
+    printf("      addr     %x\n", mach_endian_32(mh, section->addr));
+    printf("      offset   %x\n", mach_endian_32(mh, section->offset));
+    printf("      align    %x\n", mach_endian_32(mh, section->align));
+    printf("      reloff   %x\n", mach_endian_32(mh, section->reloff));
+    printf("      nreloc   %x\n", mach_endian_32(mh, section->nreloc));
+    printf("      flags    %x\n", mach_endian_32(mh, section->flags));
+}
+
+void mach_lc_segment (struct _buf * buf, struct load_command * lc)
+{
+    struct mach_header * mh = mach_mach_header(buf);
+    struct segment_command * sc = (struct segment_command *) lc;
+
+    char segname[17];
+    strncpy(segname, sc->segname, 17);
+    segname[16] = '\0';
+    printf("    segname  %s\n", segname);
+    printf("    vmaddr   %x\n", mach_endian_32(mh, sc->vmaddr));
+    printf("    vmsize   %x\n", mach_endian_32(mh, sc->vmsize));
+    printf("    fileoff  %x\n", mach_endian_32(mh, sc->fileoff));
+    printf("    filesize %x\n", mach_endian_32(mh, sc->filesize));
+    printf("    maxprot  %s\n", string_search_vm_prot(mach_endian_32(mh, sc->maxprot)));
+    printf("    initprot %s\n", string_search_vm_prot(mach_endian_32(mh, sc->initprot)));
+    printf("    nsects   %x\n", mach_endian_32(mh, sc->nsects));
+    printf("    flags    %s\n", string_search_segment_flags(mach_endian_32(mh, sc->nsects)));
+
+    size_t i;
+    for (i = 0; i < mach_endian_32(mh, sc->nsects); i++) {
+        printf("     section %d\n", (unsigned int) i);
+        void * ptr = lc;
+        ptr += sizeof(struct segment_command);
+        ptr += sizeof(struct section) * i;
+        mach_section(buf, (struct section *) ptr);
+    }
+}
+
 void mach_mach_header_parse (struct _buf * buf)
 {
     struct mach_header * mh = mach_mach_header(buf);
@@ -148,6 +196,8 @@ void mach_mach_header_parse (struct _buf * buf)
     for (i = 0; i < mach_mach_header_ncmds(buf); i++) {
         struct load_command * lc = mach_load_command(buf, i);
         printf("   load_command %s\n", string_search_load_command_cmd(mach_load_command_cmd(mh, lc)));
+        if (mach_endian_32(mh, lc->cmd) == LC_SEGMENT)
+            mach_lc_segment(buf, lc);
     }
 }
 

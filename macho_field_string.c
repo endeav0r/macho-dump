@@ -287,6 +287,24 @@ struct string_search STRING_SEARCH_LOAD_COMMAND_CMD [] = {
 };
 
 
+struct string_search STRING_SEARCH_VM_PROT [] = {
+    {VM_PROT_READ, "READ"},
+    {VM_PROT_WRITE, "WRITE"},
+    {VM_PROT_EXECUTE, "EXECUTE"},
+    {VM_PROT_NO_CHANGE, "NO_CHANGE"},
+    {VM_PROT_COPY, "COPY"},
+    {0, NULL}
+};
+
+
+struct string_search STRING_SEARCH_SEGMENT_FLAGS [] = {
+    {SG_HIGHVM, "HIGHVM"},
+    {SG_FVMLIB, "FVMLIB"},
+    {SG_NORELOC, "NORELOC"},
+    {SG_PROTECTED_VERSION_1, "PROTECTED_VERSION_1"},
+    {0, NULL}
+};
+
 
 const char * string_search (struct string_search * haystack, uint32_t needle)
 {
@@ -391,4 +409,14 @@ const char * string_search_mach_header_flags (uint32_t flags)
 const char * string_search_load_command_cmd (uint32_t cmd)
 {
     return string_search(STRING_SEARCH_LOAD_COMMAND_CMD, cmd);
+}
+
+const char * string_search_vm_prot (uint32_t prot)
+{
+    return string_search_flags(STRING_SEARCH_VM_PROT, prot);
+}
+
+const char * string_search_segment_flags (uint32_t flags)
+{
+    return string_search_flags(STRING_SEARCH_SEGMENT_FLAGS, flags);
 }
